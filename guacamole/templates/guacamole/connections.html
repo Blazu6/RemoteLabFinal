@@ -1,0 +1,40 @@
+<h1>Lista połączeń</h1>
+
+{% if error %}
+<p style="color:red;">{{ error }}</p>
+{% else %}
+<ul>
+    {% for id, conn in connections.items %}
+    <li>
+        {{ conn.name }} ({{ conn.protocol }})
+        <button onclick="connect('{{ id }}')">Połącz</button>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<div id="guac_display"></div>
+
+<script src="{% static 'guacamole-common-js/all.min.js' %}"></script>
+<script>
+function connect(connId) {
+    fetch(`/guac/connect/${connId}/`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            const tunnel = new Guacamole.WebSocketTunnel(`ws://192.168.0.100:4822?token=${data.authToken}`);
+            const guac = new Guacamole.Client(tunnel);
+
+            const display = document.getElementById('guac_display');
+            display.innerHTML = '';
+            display.appendChild(guac.getDisplay().getElement());
+
+            guac.connect();
+        })
+        .catch(err => console.error(err));
+}
+</script>
