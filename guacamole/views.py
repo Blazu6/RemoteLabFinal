@@ -5,7 +5,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-GUAC_BASE = "http://192.168.0.100:8090/guacamole/api"
+GUAC_BASE = "http://192.168.1.10:8090/guacamole/api"
 
 def guac_login(request):
     if request.method == "POST":
@@ -16,7 +16,7 @@ def guac_login(request):
         try:
             # Wyślij login do API Guacamole
             res = requests.post(
-                "http://192.168.0.100:8090/guacamole/api/tokens",
+                "http://192.168.1.10:8090/guacamole/api/tokens",
                 headers={"Content-Type": "application/x-www-form-urlencoded"},
                 data={"username": username, "password": password}
             )
